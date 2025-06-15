@@ -1,0 +1,3 @@
+commando para botar no terminal para fazer os loads
+
+sqlldr SYSTEM/root@//127.0.0.1:1521/XE control=district.ctl log=district.log bad=district.bad direct=true skip=1

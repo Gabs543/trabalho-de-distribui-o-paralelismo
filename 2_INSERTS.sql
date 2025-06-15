@@ -1,57 +1,10 @@
-LOAD DATA
-INFILE 'tempo.csv'
-INTO TABLE tempo
-FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-TRAILING NULLCOLS
-(
-  id,
-  period,
-  day,
-  month,
-  year,
-  weekday
-)
+drop table crime;
+drop table data;
+drop table segment;
+drop table vertice;
+drop table neighborhood;
+drop table district;
 
-LOAD DATA
-INFILE 'segmento.csv'
-INTO TABLE segmento
-FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-TRAILING NULLCOLS
-(
-  id,
-  name,
-  geometry
-)
+select * from neighborhood;
 
-LOAD DATA
-INFILE 'crimes.csv'
-INTO TABLE crimes
-FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"'
-TRAILING NULLCOLS
-(
-  id,
-  total_feminicide,
-  total_homicide,
-  total_felony_murder,
-  total_bodily_harm,
-  total_theft_cellphone,
-  total_armed_robbery_cellphone,
-  total_theft_auto,
-  total_armed_robbery_auto,
-  segment_id,
-  time_id
-)
-
-LOAD DATA
-INFILE 'vertice.csv'
-SKIP 1
-INTO TABLE zonas
-FIELDS TERMINATED BY ';' OPTIONALLY ENCLOSED BY '"'
-TRAILING NULLCOLS
-(
-  id,
-  label,
-  district_id,
-  neighborhood_id,
-  zone_id
-)
+sqlldr SYSTEM/root@//127.0.0.1:1521/XE control=district.ctl log=district.log bad=district.bad direct=true skip=1
