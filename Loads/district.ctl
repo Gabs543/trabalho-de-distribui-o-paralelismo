@@ -1,4 +1,4 @@
-LOAD DATA
+LOAD DATA CHARACTERSET AL32UTF8
 INFILE 'C:\csv/district.csv'
 BADFILE 'district.bad'
 DISCARDFILE 'district.dsc'
