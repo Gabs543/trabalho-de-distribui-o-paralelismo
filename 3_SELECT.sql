@@ -113,7 +113,7 @@ FROM
 JOIN segment s ON cdu.segment_id = s.id
 JOIN data_time t ON cdu.time_id = t.id
 WHERE
-    s.oneway IS TRUE
+    s.oneway = 1
     AND t.year = 2012
 GROUP BY
     cdu.crime_type
