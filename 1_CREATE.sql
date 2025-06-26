@@ -136,7 +136,7 @@ CREATE TABLE crime_frag (
     total_armed_robbery_auto NUMBER,
     segment_id NUMBER NOT NULL,
     time_id NUMBER NOT NULL,
-    CONSTRAINT fk2_segment FOREIGN key (segment_id) REFERENCES segment_frag(id),
+    /*CONSTRAINT fk2_segment FOREIGN key (segment_id) REFERENCES segment_frag(id),*/
     CONSTRAINT fk2_time FOREIGN key (time_id) REFERENCES data_time_frag(id)
 
 )PARTITION by REFERENCE (fk2_time);
