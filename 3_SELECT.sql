@@ -1,7 +1,7 @@
 alter session set current_schema = C##PolRouteDS; 
-select * from segment;
 
 
+/* 1. Qual o total de crimes por tipo e por segmento das ruas do distrito de IGUATEMI durante o ano de 2016? */
 WITH dt AS (
     SELECT * 
     FROM data_time 
@@ -36,7 +36,7 @@ FROM
 JOIN dt ON cdu.time_id = dt.id
 JOIN crime c ON dt.id = c.time_id
 JOIN segments s ON s.id = c.segment_id
-JOIN vertice v ON v.id = s.final_vertice_id
+JOIN vertice v ON v.id = s.final_vertice_id /* OR v.id = s.start_vertive_id */
 JOIN  d ON v.district_id = d.id
 GROUP BY
     s.id,
@@ -45,6 +45,8 @@ ORDER BY
     s.id,
     total_occurrences DESC;
 
+
+/* 2. Qual o total de crimes por tipo e por segmento das ruas do distrito de IGUATEMI entre 2006 e 2016? */
 WITH dt AS (
     SELECT * 
     FROM data_time 
@@ -79,7 +81,7 @@ FROM
 JOIN dt ON cdu.time_id = dt.id
 JOIN crime c ON dt.id = c.time_id
 JOIN segments s ON s.id = c.segment_id
-JOIN vertice v ON v.id = s.final_vertice_id
+JOIN vertice v ON v.id = s.final_vertice_id /* OR v.id = s.start_vertive_id */
 JOIN d ON v.district_id = d.id
 GROUP BY
     s.id,
@@ -88,6 +90,8 @@ ORDER BY
     s.id,
     total_occurrences_in_period DESC;
 
+
+/* 3. Qual o total de ocorrências de Roubo de Celular e roubo de carro no bairro de SANTA EFIGÊNIA em 2015? */
 /* Not executing*/
 WITH dt AS (
     SELECT * 
@@ -97,6 +101,7 @@ WITH dt AS (
     SELECT *
     FROM neighborhood
     WHERE name = 'SANTA EFIGENIA'
+    /*WHERE name LIKE 'Santa Efi%'*/
 )
 SELECT
     SUM(c.total_armed_robbery_cellphone) AS total_roubos_celular,
@@ -105,11 +110,22 @@ FROM
     crime c
 JOIN dt ON dt.id = c.time_id
 JOIN segments s ON s.id = c.segment_id 
-JOIN vertice v ON v.id = s.final_vertice_id
+JOIN vertice v ON v.id = s.final_vertice_id /* OR v.id = s.start_vertive_id */
 JOIN ng ON ng.id = v.neighborhood_id;
 
+
+/* 4. Qual o total de crimes por tipo em vias de mão única da cidade durante o ano de 2012? */
 /* Not executing*/
-WITH CrimeDataUnpivoted AS (
+WITH dt AS (
+    SELECT * 
+    FROM data_time 
+    WHERE year = 2012
+), s AS (
+    SELECT *
+    FROM segments
+    /* WHERE oneway = 1 */
+
+), CrimeDataUnpivoted AS (
     SELECT segment_id, time_id, 'Feminicídio' AS crime_type, total_feminicide AS total_count FROM crime WHERE total_feminicide > 0
     UNION ALL
     SELECT segment_id, time_id, 'Homicídio Doloso' AS crime_type, total_homicide AS total_count FROM crime WHERE total_homicide > 0
@@ -131,26 +147,26 @@ SELECT
     SUM(cdu.total_count) AS total_citywide_oneway_streets
 FROM
     CrimeDataUnpivoted cdu
-JOIN segments s ON cdu.segment_id = s.id
-JOIN data_time t ON cdu.time_id = t.id
-WHERE
-    s.oneway = 1
-    AND t.year = 2012
+JOIN s ON s.id = cdu.segment_id
+JOIN dt ON dt.id = cdu.time_id
 GROUP BY
     cdu.crime_type
 ORDER BY
     total_citywide_oneway_streets DESC;
 
 
+/* 5. Qual o total de roubos de carro e celular em todos os segmentos durante o ano de 2017? */
 SELECT
     SUM(c.total_armed_robbery_auto) AS total_roubos_de_carro_2017,
     SUM(c.total_theft_cellphone + c.total_armed_robbery_cellphone) AS total_crimes_de_celular_2017
 FROM
     crime c
-JOIN data_time t ON c.time_id = t.id
+JOIN data_time dt ON c.time_id = dt.id
 WHERE
-    t.year = 2017;
+    dt.year = 2017;
 
+
+/* 6. Quais os IDs de segmentos que possuíam o maior índice criminal (soma de ocorrências de todos os tipos de crimes), durante o mês de Novembro de 2010?*/
 WITH SegmentCriminality AS (
     SELECT
         c.segment_id,
@@ -161,10 +177,10 @@ WITH SegmentCriminality AS (
         ) AS criminality_index
     FROM
         crime c
-    JOIN data_time t ON c.time_id = t.id
+    JOIN data_time dt ON c.time_id = dt.id
     WHERE
-        t.year = 2010
-        AND t.month = 11 -- Novembro
+        dt.year = 2010
+        AND dt.month = 11 /* Novembro */
     GROUP BY
         c.segment_id
 ),
@@ -184,6 +200,8 @@ FROM
 WHERE
     rnk = 1;
 
+
+/* 7. Quais os IDs dos segmentos que possuíam o maior índice criminal (soma de ocorrências de todos os tipos de crimes) durante os finais de semana do ano de 2018? */
 WITH WeekendSegmentCriminality AS (
     SELECT
         c.segment_id,
@@ -194,10 +212,10 @@ WITH WeekendSegmentCriminality AS (
         ) AS criminality_index
     FROM
         crime c
-    JOIN data_time t ON c.time_id = t.id
+    JOIN data_time dt ON c.time_id = dt.id
     WHERE
-        t.year = 2018
-        AND t.weekday IN ('saturday', 'sunday')
+        dt.year = 2018
+        AND dt.weekday IN ('saturday', 'sunday')
     GROUP BY
         c.segment_id
 ),

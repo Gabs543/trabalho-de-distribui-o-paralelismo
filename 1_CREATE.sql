@@ -60,9 +60,7 @@ CREATE TABLE vertice_frag (
     CONSTRAINT fk2_neighborhood  FOREIGN KEY (neighborhood_id) REFERENCES neighborhood_frag(id)
 )PARTITION by REFERENCE (fk2_district);
 
-
-
-CREATE TABLE segment (
+CREATE TABLE segments (
     id NUMBER(19) PRIMARY KEY,
     geom VARCHAR2(1000),
     oneway NUMBER(1),
