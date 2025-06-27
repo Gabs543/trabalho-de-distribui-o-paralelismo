@@ -1,6 +1,16 @@
 alter session set current_schema = C##PolRouteDS; 
+select * from segment;
 
-WITH CrimeDataUnpivoted AS (
+
+WITH dt AS (
+    SELECT * 
+    FROM data_time 
+    WHERE year = 2016
+), d AS (
+    SELECT *
+    FROM district
+    WHERE name = 'IGUATEMI'
+), CrimeDataUnpivoted  AS (
     SELECT segment_id, time_id, 'Feminicídio' AS crime_type, total_feminicide AS total_count FROM crime WHERE total_feminicide > 0
     UNION ALL
     SELECT segment_id, time_id, 'Homicídio Doloso' AS crime_type, total_homicide AS total_count FROM crime WHERE total_homicide > 0
@@ -17,19 +27,17 @@ WITH CrimeDataUnpivoted AS (
     UNION ALL
     SELECT segment_id, time_id, 'Roubo de Veículo' AS crime_type, total_armed_robbery_auto AS total_count FROM crime WHERE total_armed_robbery_auto > 0
 )
-SELECT
+ SELECT
     s.id AS segment_id,
     cdu.crime_type,
     SUM(cdu.total_count) AS total_occurrences
 FROM
     CrimeDataUnpivoted cdu
-JOIN data_time t ON cdu.time_id = t.id
-JOIN segment s ON cdu.segment_id = s.id
-JOIN vertice v ON s.start_vertice_id = v.id
-JOIN district d ON v.district_id = d.id
-WHERE
-    d.name = 'IGUATEMI'
-    AND t.year = 2016
+JOIN dt ON cdu.time_id = dt.id
+JOIN crime c ON dt.id = c.time_id
+JOIN segments s ON s.id = c.segment_id
+JOIN vertice v ON v.id = s.final_vertice_id
+JOIN  d ON v.district_id = d.id
 GROUP BY
     s.id,
     cdu.crime_type
@@ -37,7 +45,15 @@ ORDER BY
     s.id,
     total_occurrences DESC;
 
-WITH CrimeDataUnpivoted AS (
+WITH dt AS (
+    SELECT * 
+    FROM data_time 
+    WHERE year BETWEEN 2006 AND 2016
+), d AS (
+    SELECT *
+    FROM district
+    WHERE name = 'IGUATEMI'
+), CrimeDataUnpivoted AS (
     SELECT segment_id, time_id, 'Feminicídio' AS crime_type, total_feminicide AS total_count FROM crime WHERE total_feminicide > 0
     UNION ALL
     SELECT segment_id, time_id, 'Homicídio Doloso' AS crime_type, total_homicide AS total_count FROM crime WHERE total_homicide > 0
@@ -60,13 +76,11 @@ SELECT
     SUM(cdu.total_count) AS total_occurrences_in_period
 FROM
     CrimeDataUnpivoted cdu
-JOIN data_time t ON cdu.time_id = t.id
-JOIN segment s ON cdu.segment_id = s.id
-JOIN vertice v ON s.start_vertice_id = v.id
-JOIN district d ON v.district_id = d.id
-WHERE
-    d.name = 'IGUATEMI'
-    AND t.year BETWEEN 2006 AND 2016
+JOIN dt ON cdu.time_id = dt.id
+JOIN crime c ON dt.id = c.time_id
+JOIN segments s ON s.id = c.segment_id
+JOIN vertice v ON v.id = s.final_vertice_id
+JOIN d ON v.district_id = d.id
 GROUP BY
     s.id,
     cdu.crime_type
@@ -74,18 +88,25 @@ ORDER BY
     s.id,
     total_occurrences_in_period DESC;
 
+/* Not executing*/
+WITH dt AS (
+    SELECT * 
+    FROM data_time 
+    WHERE year = 2015
+), ng AS (
+    SELECT *
+    FROM neighborhood
+    WHERE name = 'SANTA EFIGENIA'
+)
 SELECT
     SUM(c.total_armed_robbery_cellphone) AS total_roubos_celular,
     SUM(c.total_armed_robbery_auto) AS total_roubos_carro
 FROM
     crime c
-JOIN DATA_time t ON c.time_id = t.id
-JOIN segment s ON c.segment_id = s.id
-JOIN vertice v ON s.start_vertice_id = v.id
-JOIN neighborhood n ON v.neighborhood_id = n.id
-WHERE
-    n.name = 'SANTA EFIGENIA'
-    AND t.year = 2015;
+JOIN dt ON dt.id = c.time_id
+JOIN segments s ON s.id = c.segment_id 
+JOIN vertice v ON v.id = s.final_vertice_id
+JOIN ng ON ng.id = v.neighborhood_id;
 
 /* Not executing*/
 WITH CrimeDataUnpivoted AS (
@@ -110,7 +131,7 @@ SELECT
     SUM(cdu.total_count) AS total_citywide_oneway_streets
 FROM
     CrimeDataUnpivoted cdu
-JOIN segment s ON cdu.segment_id = s.id
+JOIN segments s ON cdu.segment_id = s.id
 JOIN data_time t ON cdu.time_id = t.id
 WHERE
     s.oneway = 1
@@ -129,7 +150,6 @@ FROM
 JOIN data_time t ON c.time_id = t.id
 WHERE
     t.year = 2017;
-
 
 WITH SegmentCriminality AS (
     SELECT
@@ -177,7 +197,7 @@ WITH WeekendSegmentCriminality AS (
     JOIN data_time t ON c.time_id = t.id
     WHERE
         t.year = 2018
-        AND t.weekday IN ('Sábado', 'Domingo')
+        AND t.weekday IN ('saturday', 'sunday')
     GROUP BY
         c.segment_id
 ),

@@ -8,6 +8,13 @@ CREATE TABLE district (
     geom CLOB NOT NULL
 );
 
+
+CREATE TABLE district_parallel (
+    id NUMBER PRIMARY KEY,
+    name VARCHAR2(255) UNIQUE NOT NULL,
+    geom CLOB NOT NULL
+);
+
 CREATE TABLE district_frag (
     id NUMBER PRIMARY KEY,
     name VARCHAR2(255) UNIQUE NOT NULL,
@@ -63,7 +70,6 @@ CREATE TABLE segment (
     final_vertice_id NUMBER(19),
     start_vertice_id NUMBER(19)
 );
-
 ALTER TABLE segment ADD CONSTRAINT fk1_final FOREIGN KEY (final_vertice_id )
 REFERENCES vertice(id);
 
@@ -79,7 +85,7 @@ CREATE TABLE segment_frag (
     REFERENCES vertice_frag(id)
 )PARTITION by REFERENCE (fk2_final);
 
-CREATE TABLE data_time (
+CREATE TABLE date_time (
     id NUMBER PRIMARY KEY,
     period VARCHAR2(20),
     day NUMBER,
@@ -140,5 +146,15 @@ CREATE TABLE crime_frag (
     CONSTRAINT fk2_time FOREIGN key (time_id) REFERENCES data_time_frag(id)
 
 )PARTITION by REFERENCE (fk2_time);
+
+CREATE TABLE district_parallel AS SELECT /*+ PARALLEL(4) */ * FROM DISTRICT;
+CREATE TABLE neighborhood_parallel AS SELECT /*+ PARALLEL(4) */ * FROM NEIGHBORHOOD;
+CREATE TABLE vertice_parallel AS SELECT /*+ PARALLEL(4) */ * FROM vertice;
+CREATE TABLE segment_parallel AS SELECT /*+ PARALLEL(4) */ * FROM segment;
+CREATE TABLE data_time_parallel AS SELECT /*+ PARALLEL(4) */ * FROM DATA_TIME;
+CREATE TABLE crime_parallel AS SELECT /*+ PARALLEL(4) */ * FROM CRIME;
+
+
+
 
 
