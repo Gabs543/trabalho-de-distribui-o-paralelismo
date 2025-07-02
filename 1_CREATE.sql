@@ -8,13 +8,6 @@ CREATE TABLE district (
     geom CLOB NOT NULL
 );
 
-
-CREATE TABLE district_parallel (
-    id NUMBER PRIMARY KEY,
-    name VARCHAR2(255) UNIQUE NOT NULL,
-    geom CLOB NOT NULL
-);
-
 CREATE TABLE district_frag (
     id NUMBER PRIMARY KEY,
     name VARCHAR2(255) UNIQUE NOT NULL,

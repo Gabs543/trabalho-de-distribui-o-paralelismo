@@ -1,3 +1,8 @@
 commando para botar no terminal para fazer os loads
 
+sqlldr SYSTEM/root@//127.0.0.1:1521/XE control=district.ctl log=district.log bad=district.bad direct=true skip=1
+sqlldr SYSTEM/root@//127.0.0.1:1521/XE control=neighborhood.ctl log=neighborhood.log bad=neighborhood.bad direct=true skip=1
+sqlldr SYSTEM/root@//127.0.0.1:1521/XE control=vertice.ctl log=vertice.log bad=vertice.bad direct=true skip=1
+sqlldr SYSTEM/root@//127.0.0.1:1521/XE control=segment.ctl log=segment.log bad=segment.bad direct=true skip=1
+sqlldr SYSTEM/root@//127.0.0.1:1521/XE control=data_time.ctl log=data_time.log bad=data_time.bad direct=true skip=1
 sqlldr SYSTEM/root@//127.0.0.1:1521/XE control=crime.ctl log=crime.log bad=crime.bad direct=true skip=1
