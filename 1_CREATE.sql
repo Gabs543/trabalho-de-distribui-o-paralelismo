@@ -141,7 +141,7 @@ CREATE TABLE crime_frag (
 CREATE TABLE district_parallel AS SELECT /*+ PARALLEL(4) */ * FROM DISTRICT;
 CREATE TABLE neighborhood_parallel AS SELECT /*+ PARALLEL(4) */ * FROM NEIGHBORHOOD;
 CREATE TABLE vertice_parallel AS SELECT /*+ PARALLEL(4) */ * FROM vertice;
-CREATE TABLE segment_parallel AS SELECT /*+ PARALLEL(4) */ * FROM segment;
+CREATE TABLE segment_parallel AS SELECT /*+ PARALLEL(4) */ * FROM segments;
 CREATE TABLE data_time_parallel AS SELECT /*+ PARALLEL(4) */ * FROM DATA_TIME;
 CREATE TABLE crime_parallel AS SELECT /*+ PARALLEL(4) */ * FROM CRIME;
 
