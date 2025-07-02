@@ -61,7 +61,7 @@ CREATE TABLE segments (
     final_vertice_id NUMBER(19),
     start_vertice_id NUMBER(19)
 );
-ALTER TABLE segment ADD CONSTRAINT fk1_final FOREIGN KEY (final_vertice_id )
+ALTER TABLE segments ADD CONSTRAINT fk1_final FOREIGN KEY (final_vertice_id )
 REFERENCES vertice(id);
 
 
@@ -118,7 +118,7 @@ CREATE TABLE crime (
 
 );
 
-ALTER TABLE crime ADD CONSTRAINT fk1_segment FOREIGN KEY (segment_id) REFERENCES segment(id);
+ALTER TABLE crime ADD CONSTRAINT fk1_segment FOREIGN KEY (segment_id) REFERENCES segments(id);
 ALTER TABLE crime ADD CONSTRAINT fk1_time FOREIGN KEY (time_id) REFERENCES data_time(id);
 
 CREATE TABLE crime_frag (

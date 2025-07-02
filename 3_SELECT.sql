@@ -92,7 +92,6 @@ ORDER BY
 
 
 /* 3. Qual o total de ocorrências de Roubo de Celular e roubo de carro no bairro de SANTA EFIGÊNIA em 2015? */
-/* Not executing*/
 WITH dt AS (
     SELECT * 
     FROM data_time 
@@ -115,7 +114,6 @@ JOIN ng ON ng.id = v.neighborhood_id;
 
 
 /* 4. Qual o total de crimes por tipo em vias de mão única da cidade durante o ano de 2012? */
-/* Not executing*/
 WITH dt AS (
     SELECT * 
     FROM data_time 
@@ -123,7 +121,7 @@ WITH dt AS (
 ), s AS (
     SELECT *
     FROM segments
-    /* WHERE oneway = 1 */
+      WHERE oneway = 1 
 
 ), CrimeDataUnpivoted AS (
     SELECT segment_id, time_id, 'Feminicídio' AS crime_type, total_feminicide AS total_count FROM crime WHERE total_feminicide > 0
